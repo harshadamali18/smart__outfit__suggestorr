@@ -1,8 +1,6 @@
-
-
 from flask import Flask, render_template, request
 import requests
-
+import os
 
 app = Flask(__name__)
 
@@ -12,7 +10,6 @@ def get_weather(city):
         response = requests.get(url)
         data = response.json()
 
-        # Get current condition and temperature
         current_condition = data['current_condition'][0]
         temp_C = float(current_condition['temp_C'])
         weather_desc = current_condition['weatherDesc'][0]['value']
@@ -41,14 +38,12 @@ def index():
 
 @app.route("/weather", methods=["POST"])
 def weather():
-    
-        city = request.form["city"]
-        weather_desc, temp = get_weather(city)
-        outfit = suggest_outfit(temp)
-        return render_template("index.html", weather=weather_desc, outfit=outfit)
-    
+    city = request.form.get("city")
+    weather_desc, temp = get_weather(city)
+    outfit = suggest_outfit(temp)
+    return render_template("index.html", weather=weather_desc, outfit=outfit)
+
 if __name__ == "__main__":
-    Port = int(os.environ.get("PORT", 10000))
+    port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
 
-    
